@@ -1,10 +1,12 @@
 import { IBMPlexSerif_400Regular, useFonts } from '@expo-google-fonts/ibm-plex-serif';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
 export default function HomeScreen() {
   const [fontsLoaded] = useFonts({
     IBMPlexSerif_400Regular,
   });
+  const router = useRouter();
 
   if (!fontsLoaded) {
     return null;
@@ -13,8 +15,8 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>solmap</Text>
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>open app</Text>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/camera')}>
+        <Text style={styles.buttonText}>scan text</Text>
       </TouchableOpacity>
     </View>
   );
