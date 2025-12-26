@@ -17,25 +17,54 @@ export interface CausalGraph {
 }
 
 export async function extractCausalGraph(text: string, apiKey: string): Promise<CausalGraph> {
-  const prompt = `Extract all causal relationships from the following text and return them as a JSON object.
+  const prompt = `You are helping someone understand their emotions by mapping the causal relationships in their thoughts and feelings.
 
 Text: "${text}"
 
-Please identify:
-1. All entities/concepts mentioned (these will be nodes)
-2. All causal relationships between them (these will be edges)
+Think through this step-by-step:
 
-Return ONLY a valid JSON object in this exact format, with no other text:
+1. First, identify the emotions, feelings, and emotional states expressed (both explicit and implicit)
+2. Then, identify the events, situations, people, thoughts, or behaviors mentioned
+3. Analyze the causal connections: what leads to what? Consider:
+   - Direct causes (X makes me feel Y)
+   - Indirect causes (X leads to Y which makes me feel Z)
+   - Cyclical patterns (X causes Y which reinforces X)
+   - Hidden emotional drivers (what might be underlying the surface emotions?)
+4. Look for emotional complexity:
+   - Conflicting feelings
+   - Layered emotions (surface emotion vs deeper emotion)
+   - Triggers and responses
+   - Coping mechanisms and their effects
+
+Now extract these as a causal graph. Use clear, emotionally-aware labels for nodes. Capture both obvious and subtle relationships.
+
+Return ONLY a valid JSON object in this exact format:
 {
   "nodes": [
-    {"id": "unique_id", "label": "entity name"}
+    {"id": "unique_id", "label": "concise label"}
   ],
   "edges": [
     {"from": "source_id", "to": "target_id"}
   ]
 }
 
-For example, for "work makes me anxious", return:
+Example 1 - "I avoid social events because I'm afraid of being judged, but then I feel lonely":
+{
+  "nodes": [
+    {"id": "fear_judgment", "label": "fear of judgment"},
+    {"id": "avoid_social", "label": "avoiding people"},
+    {"id": "loneliness", "label": "loneliness"},
+    {"id": "isolation", "label": "isolation"}
+  ],
+  "edges": [
+    {"from": "fear_judgment", "to": "avoid_social"},
+    {"from": "avoid_social", "to": "isolation"},
+    {"from": "isolation", "to": "loneliness"},
+    {"from": "loneliness", "to": "fear_judgment"}
+  ]
+}
+
+Example 2 - "work makes me anxious":
 {
   "nodes": [
     {"id": "work", "label": "work"},
@@ -46,7 +75,7 @@ For example, for "work makes me anxious", return:
   ]
 }
 
-Extract implicit and explicit causal relationships. Be concise with node labels.`;
+Be concise but emotionally precise with labels. Reveal the emotional architecture of the text.`;
 
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
